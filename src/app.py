@@ -1,36 +1,31 @@
 from flask import Flask, request, jsonify
-import json
 
 app = Flask(__name__)
 
-@app.route(rule='/compute', methods=['POST'])
-
+@app.route('/calculator/', methods=['GET'])
 def compute():
     name = request.args.get('name')
-    var1 = request.args.get('var1')
-    var2 = request.args.get('var2')
-    
-    if not name or not var1 or not var2:
-        return jsonify({'error': 'Missing required parameters'}), 400
-    
+    var_first = request.args.get('var_first')
+    var_second = request.args.get('var_second')
+
+    if not name or not var_first or not var_second:
+        return jsonify({'Error': 'Missing parameters'}), 400
+
     try:
-        var1 = float(var1)
-        var2 = float(var2)
+        var_first = float(var_first)
+        var_second = float(var_second)
     except ValueError:
-        return jsonify({'error': 'Invalid input'}), 400
-    
+        return jsonify({'Error': 'Invalid number format'}), 400
+
     response = {
         'name': name,
-        'addition': var1 + var2,
-        'subtraction': var1 - var2,
-        'multiplication': var1 * var2,
-        'division': var1 / var2 if var2 != 0 else 'undefined'
+        'addition': var_first + var_second,
+        'subtraction': var_first - var_second,
+        'multiplication': var_first * var_second,
+        'division': var_first / var_second if var_second != 0 else 'undefined'
     }
-    
-    response = json.dumps(response, indent=4)
-    
-    return response, 200
 
+    return jsonify(response), 200
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
